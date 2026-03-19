@@ -212,7 +212,7 @@ def abo(due_date: str | None, status: str, output: str):
     sender_account = os.environ.get("FAKTUROID_SENDER_ACCOUNT")
     if not sender_account:
         click.echo("Error: FAKTUROID_SENDER_ACCOUNT not set in .env")
-        click.echo("Format: prefix-number/bank_code (e.g. 000000-2301502986/2010)")
+        click.echo("Format: prefix-number/bank_code (e.g. 000000-1234567890/0100)")
         raise SystemExit(1)
 
     sender_name = os.environ.get("FAKTUROID_SENDER_NAME", "")

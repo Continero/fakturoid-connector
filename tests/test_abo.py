@@ -394,22 +394,18 @@ class TestFullStructure:
 class TestMatchesFakturoidOutput:
     """Verify our output matches the format Fakturoid web generates."""
 
-    def test_payment_line_matches_fakturoid(self):
-        """Compare a single payment line against known Fakturoid output.
-
-        Fakturoid line:
-        000713-0077628621 000000952500 0007462271 0507100000 0000000000 AV:Continero Corp sro, IC 07462271
-        """
+    def test_payment_line_format(self):
+        """Verify payment line matches expected ABO format exactly."""
         expense = {
             "bank_account": "000713-0077628621/0710",
             "total": 9525.00,
-            "variable_symbol": "7462271",
+            "variable_symbol": "1234567",
         }
         result = generate_abo(
             [expense],
             sender_account="000000-1234567890/2010",
-            sender_name="Continero Corp sro",
-            sender_ico="07462271",
+            sender_name="Acme Corp sro",
+            sender_ico="99887766",
             payment_date=date(2026, 3, 19),
         )
         item_line = result.split("\r\n")[3]
@@ -417,14 +413,14 @@ class TestMatchesFakturoidOutput:
         assert item_line == (
             "000713-0077628621 "
             "000000952500 "
-            "0007462271 "
+            "0001234567 "
             "0507100000 "
             "0000000000 "
-            "AV:Continero Corp sro, IC 07462271"
+            "AV:Acme Corp sro, IC 99887766"
         )
 
-    def test_group_header_matches_fakturoid(self):
-        """Fakturoid group: 2 000000-2301502986 00000015436000 190326"""
+    def test_group_header_format(self):
+        """Verify group header total and date format."""
         expenses = [
             {"bank_account": "111/0710", "total": 9525.00},
             {"bank_account": "222/0710", "total": 36641.00},
