@@ -54,6 +54,7 @@ def test_generate_abo_basic():
     assert "000000-0108849508" in lines[3]
     assert "011436000" in lines[3]  # amount in hellers
     assert "0020260201" in lines[3]  # variable symbol
+    assert "0505010000" in lines[3]  # 05 + bank(0501) + 0000
     assert "AV:Test Company, IC 12345678" in lines[3]
 
     # Footer

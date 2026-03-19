@@ -118,7 +118,8 @@ def generate_abo(
         rcv_fmt = f"{int(rcv_prefix):06d}-{int(rcv_number):010d}"
         amount_fmt = f"{amount_hellers:012d}"
         vs_fmt = f"{int(vs):010d}"
-        bank_ks_fmt = f"{int(rcv_bank):04d}{int(ks):06d}"
+        # Format: "05" + recipient_bank(4) + "00" + "00" = 10 chars total
+        bank_ks_fmt = f"05{int(rcv_bank):04d}0000"
 
         line = (
             f"{rcv_fmt} "
