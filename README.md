@@ -6,8 +6,9 @@ Built for business owners who want to manage invoices, track due dates, and get 
 
 ## Features
 
-- **CLI** — search invoices, list contacts, export data, generate reports
-- **MCP Server** — 10 tools for [Claude Code](https://claude.ai/claude-code) and other MCP-compatible AI assistants
+- **CLI** — search invoices, list contacts, export data, generate reports, create ABO payment files
+- **MCP Server** — 11 tools for [Claude Code](https://claude.ai/claude-code) and other MCP-compatible AI assistants
+- **ABO payment orders** — generate Czech bank payment files from unpaid expenses
 - **Discord notifications** — daily due date alerts split into receivables, payables, and auto-deducted payments
 - **Fakturoid API v3** — OAuth 2 Client Credentials with automatic token refresh
 
@@ -46,6 +47,11 @@ FAKTUROID_CLIENT_ID=your_client_id
 FAKTUROID_CLIENT_SECRET=your_client_secret
 FAKTUROID_SLUG=your_account_slug
 DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
+
+# ABO payment orders (optional)
+FAKTUROID_SENDER_ACCOUNT=000000-1234567890/0100
+FAKTUROID_SENDER_NAME=Your Company Name
+FAKTUROID_SENDER_ICO=12345678
 ```
 
 **Where to find your credentials:**
@@ -89,6 +95,11 @@ fakturoid report yearly --year 2025
 
 # Due date check + Discord notification
 fakturoid check-due
+
+# ABO payment order file
+fakturoid abo                         # expenses due today
+fakturoid abo --due-date 2026-03-21   # expenses due by date
+fakturoid abo -o ~/Downloads          # custom output directory
 ```
 
 ## Discord Notifications
@@ -109,6 +120,36 @@ INKASO — auto-deducted (tagged "inkaso" in Fakturoid):
 Expenses tagged with `inkaso` in Fakturoid are automatically separated into their own section, so you can see at a glance what requires manual action.
 
 Each section shows per-currency totals. Set `DISCORD_WEBHOOK_URL` in `.env` to enable.
+
+## ABO Payment Orders
+
+Generate Czech bank payment files (ABO format) from unpaid Fakturoid expenses. Upload the `.abo` file to your internet banking to create batch payment orders.
+
+```bash
+fakturoid abo --due-date 2026-03-21
+```
+
+Output:
+```
+Generating ABO for 6 expenses (due <= 2026-03-21):
+
+  N-044 | Supplier A | 20,744 CZK | due: 2026-03-20
+  N-041 | Supplier B | 46,673 CZK | due: 2026-03-20
+  ...
+
+Total: 126,426.00 CZK
+ABO file saved: output/expenses_2026-03-21.abo
+```
+
+Requires three additional `.env` variables:
+
+```env
+FAKTUROID_SENDER_ACCOUNT=000000-1234567890/0100   # your bank account (prefix-number/bank_code)
+FAKTUROID_SENDER_NAME=Your Company Name            # for AV message in payment
+FAKTUROID_SENDER_ICO=12345678                      # your company ICO
+```
+
+The generated ABO file follows the official Czech banking format specification (Česká spořitelna 3-2267a) and is compatible with Fio, KB, ČSOB, Raiffeisen, and other Czech banks.
 
 ### Cron Setup
 
@@ -136,6 +177,7 @@ The MCP server exposes Fakturoid data as tools for AI assistants like [Claude Co
 | `get_account_summary` | Account stats and totals |
 | `download_invoice_pdf` | Download invoice as PDF |
 | `list_expenses` | List expenses with optional status filter |
+| `generate_abo_file` | Generate ABO payment order from unpaid expenses |
 
 ### Setup
 
@@ -159,6 +201,7 @@ Then ask your AI assistant things like:
 - *"How much does Acme Corp owe us?"*
 - *"Create an invoice for client 42 — consulting, 10 hours at 2000 CZK"*
 - *"Download the PDF for invoice 12345"*
+- *"Generate ABO payment file for expenses due this Friday"*
 
 ## Project Structure
 
@@ -167,14 +210,16 @@ fakturoid-connector/
 ├── src/fakturoid_connector/
 │   ├── client.py           # Fakturoid API v3 client (OAuth 2)
 │   ├── cli.py              # Click CLI commands
-│   ├── mcp_server.py       # MCP server (10 tools)
+│   ├── mcp_server.py       # MCP server (11 tools)
 │   ├── notifications.py    # Discord webhook notifications
-│   └── reports.py          # Monthly/yearly report generation
+│   ├── reports.py          # Monthly/yearly report generation
+│   └── abo.py              # ABO payment order file generator
 ├── tests/
 │   ├── test_client.py
 │   ├── test_cli.py
 │   ├── test_notifications.py
-│   └── test_reports.py
+│   ├── test_reports.py
+│   └── test_abo.py
 ├── skills/
 │   └── fakturoid-connector/
 │       └── SKILL.md        # Claude Code skill definition
