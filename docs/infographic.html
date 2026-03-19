@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920, height=1080">
+<title>Fakturoid Connector</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 1920px;
+    height: 1080px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    color: #f1f5f9;
+    overflow: hidden;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(99, 102, 241, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .glow-1 {
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+    top: -100px; right: -100px;
+    border-radius: 50%;
+  }
+  .glow-2 {
+    position: absolute;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+    bottom: -100px; left: 200px;
+    border-radius: 50%;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    width: 100%; height: 100%;
+    padding: 60px 80px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 50px;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .logo-icon {
+    width: 72px; height: 72px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+    box-shadow: 0 8px 32px rgba(99, 102, 241, 0.3);
+  }
+
+  .header-text h1 {
+    font-size: 44px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #f1f5f9, #cbd5e1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .header-text .subtitle {
+    font-size: 19px;
+    color: #94a3b8;
+    margin-top: 4px;
+  }
+
+  .badge {
+    display: flex;
+    gap: 12px;
+  }
+
+  .badge span {
+    padding: 10px 22px;
+    border-radius: 100px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .badge .open-source {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+  .badge .python {
+    background: rgba(59, 130, 246, 0.15);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+  }
+  .badge .mit {
+    background: rgba(251, 191, 36, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+  }
+
+  /* Content */
+  .content {
+    flex: 1;
+    display: flex;
+    gap: 40px;
+  }
+
+  .card {
+    flex: 1;
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    border-radius: 24px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .card:nth-child(1)::before { background: linear-gradient(90deg, #6366f1, #8b5cf6); }
+  .card:nth-child(2)::before { background: linear-gradient(90deg, #10b981, #34d399); }
+  .card:nth-child(3)::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+
+  .card-icon {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+  .card:nth-child(1) .card-icon { background: rgba(99, 102, 241, 0.15); }
+  .card:nth-child(2) .card-icon { background: rgba(16, 185, 129, 0.15); }
+  .card:nth-child(3) .card-icon { background: rgba(245, 158, 11, 0.15); }
+
+  .card h2 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .card:nth-child(1) h2 { color: #a5b4fc; }
+  .card:nth-child(2) h2 { color: #6ee7b7; }
+  .card:nth-child(3) h2 { color: #fcd34d; }
+
+  .card .card-desc {
+    font-size: 17px;
+    color: #94a3b8;
+    line-height: 1.5;
+    margin-bottom: 24px;
+  }
+
+  /* Terminal */
+  .terminal {
+    background: #0f172a;
+    border-radius: 12px;
+    padding: 24px;
+    flex: 1;
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 16px;
+    line-height: 2;
+    border: 1px solid rgba(148, 163, 184, 0.1);
+  }
+  .terminal .prompt { color: #10b981; }
+  .terminal .cmd { color: #e2e8f0; }
+  .terminal .output { color: #64748b; }
+  .terminal .red { color: #f87171; }
+  .terminal .green { color: #34d399; }
+
+  /* MCP — conversation style */
+  .mcp-chat {
+    background: #0f172a;
+    border-radius: 12px;
+    padding: 24px;
+    flex: 1;
+    font-size: 16px;
+    line-height: 1.7;
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .chat-bubble {
+    border-radius: 14px;
+    padding: 14px 20px;
+    max-width: 95%;
+  }
+
+  .chat-user {
+    background: rgba(99, 102, 241, 0.15);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    color: #c7d2fe;
+    align-self: flex-end;
+  }
+
+  .chat-ai {
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    color: #94a3b8;
+    align-self: flex-start;
+  }
+
+  .chat-ai strong {
+    color: #e2e8f0;
+  }
+
+  .chat-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .chat-label-user { color: #818cf8; }
+  .chat-label-ai { color: #34d399; }
+
+  /* Discord */
+  .discord-msg {
+    background: #0f172a;
+    border-radius: 12px;
+    padding: 24px;
+    flex: 1;
+    font-size: 15px;
+    line-height: 2;
+    border: 1px solid rgba(148, 163, 184, 0.1);
+  }
+
+  .discord-msg .section-title {
+    font-weight: 700;
+    font-size: 15px;
+    color: #e2e8f0;
+    margin-bottom: 2px;
+  }
+
+  .discord-msg .item {
+    color: #94a3b8;
+    font-size: 14px;
+    padding-left: 8px;
+  }
+
+  .discord-msg .divider {
+    border-top: 1px solid rgba(148, 163, 184, 0.1);
+    margin: 10px 0;
+  }
+
+  .discord-msg .total {
+    font-weight: 600;
+    font-size: 15px;
+    margin-top: 2px;
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-left {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .repo-url {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 20px;
+    color: #6366f1;
+    font-weight: 600;
+  }
+
+  .tech-stack {
+    display: flex;
+    gap: 16px;
+  }
+  .tech-stack span {
+    font-size: 15px;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tech-stack .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .dot-python { background: #3b82f6; }
+  .dot-api { background: #10b981; }
+  .dot-oauth { background: #f59e0b; }
+
+  .footer-right {
+    font-size: 16px;
+    color: #475569;
+  }
+  .footer-right strong { color: #64748b; }
+</style>
+</head>
+<body>
+
+<div class="glow-1"></div>
+<div class="glow-2"></div>
+
+<div class="container">
+
+  <div class="header">
+    <div class="header-left">
+      <div class="logo-icon">F</div>
+      <div class="header-text">
+        <h1>Fakturoid Connector</h1>
+        <div class="subtitle">CLI + MCP Server + Discord notifikace pro Fakturoid.cz</div>
+      </div>
+    </div>
+    <div class="badge">
+      <span class="open-source">Open Source</span>
+      <span class="python">Python 3.10+</span>
+      <span class="mit">MIT License</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- Card 1: CLI -->
+    <div class="card">
+      <div class="card-icon">>&lowbar;</div>
+      <h2>CLI v terminálu</h2>
+      <div class="card-desc">Faktury, kontakty, exporty, reporty. Jedním příkazem.</div>
+      <div class="terminal">
+        <div><span class="prompt">$</span> <span class="cmd">fakturoid summary</span></div>
+        <div><span class="output">Account: Moje Firma s.r.o.</span></div>
+        <div><span class="output">Invoices: 142 | Unpaid: 5</span></div>
+        <div><span class="output">Overdue: <span class="red">2</span></span></div>
+        <div style="margin-top: 16px;"><span class="prompt">$</span> <span class="cmd">fakturoid invoices --overdue</span></div>
+        <div><span class="output">FV-2026-087 | Acme s.r.o.</span></div>
+        <div><span class="output">45,000 CZK <span class="red">[overdue]</span></span></div>
+        <div style="margin-top: 16px;"><span class="prompt">$</span> <span class="cmd">fakturoid export --format csv</span></div>
+        <div><span class="green">Exported 142 invoices</span></div>
+      </div>
+    </div>
+
+    <!-- Card 2: MCP / AI -->
+    <div class="card">
+      <div class="card-icon">AI</div>
+      <h2>MCP Server</h2>
+      <div class="card-desc">10 nástrojů pro Claude Code. Ptejte se přirozeným jazykem.</div>
+      <div class="mcp-chat">
+        <div>
+          <div class="chat-label chat-label-user">Vy</div>
+          <div class="chat-bubble chat-user">Kolik mi dluží firma Acme?</div>
+        </div>
+        <div>
+          <div class="chat-label chat-label-ai">Claude</div>
+          <div class="chat-bubble chat-ai">Acme s.r.o. má <strong>2 nezaplacené faktury</strong> v celkové výši <strong>78,500 CZK</strong>. Jedna je 12 dní po splatnosti.</div>
+        </div>
+        <div>
+          <div class="chat-label chat-label-user">Vy</div>
+          <div class="chat-bubble chat-user">Vytvoř fakturu pro Acme — konzultace, 10h po 2000 Kč</div>
+        </div>
+        <div>
+          <div class="chat-label chat-label-ai">Claude</div>
+          <div class="chat-bubble chat-ai">Faktura <strong>FV-2026-143</strong> vytvořena. Celkem <strong>20,000 CZK</strong>, splatnost 14 dní.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3: Discord -->
+    <div class="card">
+      <div class="card-icon">🔔</div>
+      <h2>Discord notifikace</h2>
+      <div class="card-desc">Ranní přehled splatností. Co inkasovat, co zaplatit, co jde samo.</div>
+      <div class="discord-msg">
+        <div class="section-title">📤 FAKTURY — co máte dostat:</div>
+        <div class="item">🔴 FV-087 | Acme s.r.o. | 45,000 CZK | 8 dní po splatnosti</div>
+        <div class="item">🟢 FV-132 | Beta corp | 120,000 CZK | zítra</div>
+        <div class="total" style="color: #34d399;">💰 K inkasu: 165,000 CZK</div>
+
+        <div class="divider"></div>
+
+        <div class="section-title">📥 NÁKLADY — co musíte zaplatit:</div>
+        <div class="item">🟡 N-041 | Kancelář s.r.o. | 18,500 CZK | dnes</div>
+        <div class="item">🟢 N-042 | Účetní servis | 8,200 CZK | za 2 dny</div>
+        <div class="total" style="color: #f87171;">💸 K úhradě: 26,700 CZK</div>
+
+        <div class="divider"></div>
+
+        <div class="section-title">🏦 INKASO — strhne se samo:</div>
+        <div class="item">🟡 N-055 | Hosting s.r.o. | 1,290 CZK | dnes</div>
+        <div class="total" style="color: #fbbf24;">💳 Inkaso: 1,290 CZK</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <div class="footer-left">
+      <div class="repo-url">github.com/Continero/fakturoid-connector</div>
+      <div class="tech-stack">
+        <span><span class="dot dot-python"></span> Python</span>
+        <span><span class="dot dot-api"></span> Fakturoid API v3</span>
+        <span><span class="dot dot-oauth"></span> OAuth 2</span>
+      </div>
+    </div>
+    <div class="footer-right">
+      by <strong>Continero Corp</strong>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
