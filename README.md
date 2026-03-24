@@ -1,40 +1,40 @@
 # Fakturoid Connector
 
-**Invoices tell you what happened. This connector tells you what to do about it.**
+Faktura vám řekne, co se stalo. Tenhle connector vám řekne, co s tím.
 
-Open-source CLI, MCP server, and Discord notifier for [Fakturoid.cz](https://www.fakturoid.cz/) — the Czech invoicing platform. Ask your AI assistant about invoices, generate payment files, and get daily payment reminders — all without opening a browser.
+Open-source CLI, MCP server a Discord notifikace pro [Fakturoid.cz](https://www.fakturoid.cz/). Ptáte se AI asistenta na faktury, generujete platební příkazy, dostáváte denní připomínky splatností. Bez otevírání prohlížeče.
 
 > *"Kolik nám dluží klient X?" / "Vygeneruj platební příkaz na splatné faktury." / "Jaké faktury jsou po splatnosti?"*
 >
-> You ask naturally, Claude reaches directly into Fakturoid.
+> Ptáte se přirozeně, Claude sahá přímo do Fakturoid.
 
-## Why
+## Proč to existuje
 
-Fakturoid is great for invoicing. But checking who paid, what's overdue, and what needs to go out — that's still clicking around a web UI.
+Fakturoid je skvělý na fakturaci. Ale zjistit, kdo zaplatil, co je po splatnosti a co ještě musí odejít, to je pořád proklikávání webového rozhraní.
 
-This connector turns Fakturoid into something you can **talk to**. Through [Claude Code](https://claude.ai/claude-code) (MCP server) or the terminal (CLI), you get direct access to invoices, expenses, contacts, reports, and payment files.
+Tenhle connector z Fakturoid udělá něco, s čím se dá mluvit. Přes [Claude Code](https://claude.ai/claude-code) (MCP server) nebo terminál (CLI) máte přímý přístup k fakturám, nákladům, kontaktům, reportům a platebním souborům.
 
-Combined with [Fio Connector](https://github.com/Continero/fio-connector) for bank data, you get a complete picture: what was invoiced, what was paid, and what's still open.
+V kombinaci s [Fio Connectorem](https://github.com/Continero/fio-connector) pro bankovní data dostanete kompletní obraz: co bylo fakturováno, co bylo zaplaceno, co je ještě otevřené.
 
-## Features
+## Co umí
 
 | | |
 |---|---|
-| **CLI** | Search invoices, list contacts, export data, generate reports, create ABO payment files |
-| **MCP Server** | 11 tools for Claude Code and other MCP-compatible AI assistants |
-| **ABO Payments** | Generate Czech bank payment files from unpaid expenses — upload to your bank, done |
-| **Discord Alerts** | Daily due date notifications split into receivables, payables, and auto-deducted payments |
-| **Fakturoid API v3** | OAuth 2 Client Credentials with automatic token refresh and auto-pagination |
+| CLI | Hledání faktur, kontakty, export dat, reporty, ABO platební příkazy |
+| MCP Server | 11 nástrojů pro Claude Code a další MCP-kompatibilní AI asistenty |
+| ABO platby | Generování platebních souborů z nezaplacených nákladů, nahrajete do banky a je to |
+| Discord upozornění | Denní notifikace o splatnostech, rozdělené na pohledávky, závazky a inkaso |
+| Fakturoid API v3 | OAuth 2 Client Credentials s automatickým obnovením tokenu a stránkováním |
 
-## Quick Start
+## Začínáme
 
-### 1. Install
+### 1. Instalace
 
 ```bash
 pip install git+https://github.com/Continero/fakturoid-connector.git
 ```
 
-Or clone and install in editable mode:
+Nebo klonovat a nainstalovat v editovatelném režimu:
 
 ```bash
 git clone https://github.com/Continero/fakturoid-connector.git
@@ -44,13 +44,13 @@ source .venv/bin/activate
 pip install -e .
 ```
 
-### 2. Configure
+### 2. Konfigurace
 
 ```bash
 cp .env.example .env
 ```
 
-Fill in your Fakturoid API credentials:
+Vyplňte přístupové údaje k Fakturoid API:
 
 ```env
 FAKTUROID_CLIENT_ID=your_client_id
@@ -58,121 +58,121 @@ FAKTUROID_CLIENT_SECRET=your_client_secret
 FAKTUROID_SLUG=your_account_slug
 ```
 
-**Where to get credentials:**
+Kde je najdete:
 
-1. Log in to [app.fakturoid.cz](https://app.fakturoid.cz/)
-2. Go to **Settings** → **User account** → **API**
-3. Create a new application — you'll get Client ID and Client Secret
-4. Your slug is the subdomain: `app.fakturoid.cz/api/v3/accounts/{slug}/...`
+1. Přihlaste se na [app.fakturoid.cz](https://app.fakturoid.cz/)
+2. Nastavení -> Uživatelský účet -> API
+3. Vytvořte novou aplikaci, dostanete Client ID a Client Secret
+4. Slug je subdoména ve vašem Fakturoid URL: `app.fakturoid.cz/api/v3/accounts/{slug}/...`
 
-### 3. Use
+### 3. Použití
 
 ```bash
-fakturoid summary              # account overview
-fakturoid invoices --overdue   # what's past due
-fakturoid search "Acme"        # find invoices
+fakturoid summary              # přehled účtu
+fakturoid invoices --overdue   # co je po splatnosti
+fakturoid search "Acme"        # hledání faktur
 ```
 
-## CLI Reference
+## CLI příkazy
 
-### Invoices
+### Faktury
 
 ```bash
-fakturoid invoices                    # all invoices
-fakturoid invoices --overdue          # overdue only
-fakturoid invoices --unpaid           # unpaid only
-fakturoid invoices --status paid      # filter by status
+fakturoid invoices                    # všechny faktury
+fakturoid invoices --overdue          # po splatnosti
+fakturoid invoices --unpaid           # nezaplacené
+fakturoid invoices --status paid      # filtr podle statusu
 
-fakturoid search "query"              # full-text search
-fakturoid invoice 12345               # invoice detail (JSON)
+fakturoid search "dotaz"              # fulltextové hledání
+fakturoid invoice 12345               # detail faktury (JSON)
 ```
 
-### Contacts
+### Kontakty
 
 ```bash
-fakturoid contacts                    # list all contacts
+fakturoid contacts                    # seznam kontaktů
 ```
 
-### Reports
+### Reporty
 
 ```bash
-fakturoid report monthly              # current month
+fakturoid report monthly              # aktuální měsíc
 fakturoid report monthly --year 2025 --month 12
-fakturoid report yearly               # current year
+fakturoid report yearly               # aktuální rok
 fakturoid report yearly --year 2025
 ```
 
-Reports output markdown tables with invoice counts, revenue, and paid/unpaid breakdowns.
+Výstupem jsou markdown tabulky s počty faktur, obratem a rozpisem zaplacených/nezaplacených.
 
 ### Export
 
 ```bash
 fakturoid export --format json -o ./output
 fakturoid export --format csv -o ./output
-fakturoid export-pdf 12345 -o ./output    # download invoice PDF
+fakturoid export-pdf 12345 -o ./output    # stažení PDF faktury
 ```
 
-### Account
+### Účet
 
 ```bash
-fakturoid summary    # plan, total invoices, unpaid count, overdue count, amounts
+fakturoid summary    # tarif, počet faktur, nezaplacené, po splatnosti, částky
 ```
 
-### ABO Payment Orders
+### ABO platební příkazy
 
-Generate Czech bank payment files from unpaid Fakturoid expenses. Upload the `.abo` file to your internet banking to pay in batch.
+Generuje platební soubory ve formátu ABO z nezaplacených nákladů ve Fakturoid. Soubor `.abo` nahrajete do internetového bankovnictví a zaplatíte hromadně.
 
 ```bash
-fakturoid abo                         # expenses due today
-fakturoid abo --due-date 2026-03-28   # expenses due by date
-fakturoid abo -o ~/Downloads          # custom output directory
+fakturoid abo                         # náklady splatné dnes
+fakturoid abo --due-date 2026-03-28   # náklady splatné do data
+fakturoid abo -o ~/Downloads          # vlastní výstupní adresář
 ```
 
-Requires three additional `.env` variables:
+Vyžaduje tři další proměnné v `.env`:
 
 ```env
-FAKTUROID_SENDER_ACCOUNT=000000-1234567890/0100   # your bank account
-FAKTUROID_SENDER_NAME=Your Company Name
+FAKTUROID_SENDER_ACCOUNT=000000-1234567890/0100   # váš bankovní účet
+FAKTUROID_SENDER_NAME=Nazev Firmy s.r.o.
 FAKTUROID_SENDER_ICO=12345678
 ```
 
-The generated ABO file follows the Czech banking format specification (3-2267a) and is compatible with Fio, KB, CSOB, Raiffeisen, and other Czech banks.
+Generovaný ABO soubor odpovídá specifikaci českého bankovního formátu (3-2267a). Funguje s Fio, KB, ČSOB, Raiffeisen a dalšími bankami.
 
-### Discord Notifications
+### Discord notifikace
 
 ```bash
 fakturoid check-due
 ```
 
-Sends a structured message to Discord with three sections:
+Pošle strukturovanou zprávu na Discord se třemi sekcemi:
 
-- **FAKTURY** — receivables (what clients owe you): overdue, due today, due within 3 days
-- **NAKLADY** — payables (what you need to pay): overdue, due today, due within 3 days
-- **INKASO** — auto-deducted (tagged `inkaso` in Fakturoid): overdue, due today, due within 3 days
+- FAKTURY -- pohledávky (co mají klienti zaplatit vám): po splatnosti, splatné dnes, splatné do 3 dnů
+- NÁKLADY -- závazky (co musíte zaplatit vy): po splatnosti, splatné dnes, splatné do 3 dnů
+- INKASO -- strhne se samo (náklady s tagem `inkaso` ve Fakturoid): po splatnosti, splatné dnes, splatné do 3 dnů
 
-Each section shows per-currency totals. Expenses tagged with `inkaso` in Fakturoid are automatically separated so you see at a glance what requires manual action.
+Každá sekce ukazuje součty po měnách. Náklady označené tagem `inkaso` se automaticky oddělí, takže hned vidíte, co vyžaduje ruční akci.
 
-Set `DISCORD_WEBHOOK_URL` in `.env` to enable:
+Pro zapnutí nastavte `DISCORD_WEBHOOK_URL` v `.env`:
 
 ```env
 DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
 ```
 
-#### Cron Setup
+#### Cron
 
-Run the due date check every morning at 8:00 AM:
+Kontrola splatností každé ráno v 8:00:
 
 ```bash
 0 8 * * * cd /path/to/fakturoid-connector && .venv/bin/fakturoid check-due
 ```
 
-## MCP Server (AI Integration)
+## MCP Server (napojení na AI)
 
-The MCP server exposes Fakturoid data as tools for [Claude Code](https://claude.ai/claude-code) and other MCP-compatible AI assistants.
+MCP server zpřístupňuje data z Fakturoid jako nástroje pro [Claude Code](https://claude.ai/claude-code) a další MCP-kompatibilní AI asistenty.
 
-### Setup
+### Nastavení
 
-Add to your `.mcp.json` or Claude Code MCP config:
+Přidejte do `.mcp.json` nebo do konfigurace Claude Code:
 
 ```json
 {
@@ -186,84 +186,84 @@ Add to your `.mcp.json` or Claude Code MCP config:
 }
 ```
 
-### Available Tools
+### Dostupné nástroje
 
-| Tool | Description |
-|------|-------------|
-| `search_invoices` | Full-text search across invoices |
-| `get_invoice` | Get invoice detail by ID |
-| `list_overdue_invoices` | All overdue invoices |
-| `list_unpaid_invoices` | All unpaid/open invoices |
-| `create_invoice` | Create a new invoice with line items |
-| `list_contacts` | List or search contacts |
-| `get_contact` | Get contact detail by ID |
-| `get_account_summary` | Account stats, unpaid/overdue totals |
-| `download_invoice_pdf` | Download invoice as PDF |
-| `list_expenses` | List expenses with optional status filter |
-| `generate_abo_file` | Generate ABO payment order from unpaid expenses |
+| Nástroj | Popis |
+|---------|-------|
+| `search_invoices` | Fulltextové hledání faktur |
+| `get_invoice` | Detail faktury podle ID |
+| `list_overdue_invoices` | Faktury po splatnosti |
+| `list_unpaid_invoices` | Nezaplacené faktury |
+| `create_invoice` | Vystavení nové faktury s položkami |
+| `list_contacts` | Seznam nebo hledání kontaktů |
+| `get_contact` | Detail kontaktu podle ID |
+| `get_account_summary` | Statistiky účtu, nezaplacené a po splatnosti |
+| `download_invoice_pdf` | Stažení faktury jako PDF |
+| `list_expenses` | Náklady s volitelným filtrem statusu |
+| `generate_abo_file` | ABO platební příkaz z nezaplacených nákladů |
 
-### Example Prompts
+### Příklady dotazů
 
-Once connected, ask naturally:
+Po připojení se ptáte běžnou řečí:
 
-- *"What invoices are overdue?"*
-- *"How much does Acme Corp owe us?"*
-- *"Show me all unpaid invoices over 50,000 CZK"*
-- *"Create an invoice for client 42 — consulting, 10 hours at 2,000 CZK"*
-- *"Download the PDF for invoice FV-2025-042"*
-- *"Generate ABO payment file for expenses due this Friday"*
-- *"What's our total outstanding receivables?"*
+- *"Jaké faktury jsou po splatnosti?"*
+- *"Kolik nám dluží Acme Corp?"*
+- *"Ukaž nezaplacené faktury nad 50 000 Kč"*
+- *"Vystav fakturu pro klienta 42 -- konzultace, 10 hodin po 2 000 Kč"*
+- *"Stáhni PDF faktury FV-2025-042"*
+- *"Vygeneruj ABO platební soubor pro náklady splatné tento pátek"*
+- *"Kolik máme celkem nesplacených pohledávek?"*
 
-## Configuration Reference
+## Konfigurace
 
-All configuration is via environment variables (`.env` file):
+Veškerá konfigurace je přes proměnné prostředí (soubor `.env`):
 
-| Variable | Required | Description |
-|----------|:--------:|-------------|
-| `FAKTUROID_CLIENT_ID` | yes | OAuth 2 Client ID from Fakturoid API settings |
-| `FAKTUROID_CLIENT_SECRET` | yes | OAuth 2 Client Secret |
-| `FAKTUROID_SLUG` | yes | Your Fakturoid account slug |
-| `DISCORD_WEBHOOK_URL` | no | Discord webhook for `check-due` notifications |
-| `FAKTUROID_SENDER_ACCOUNT` | no | Bank account for ABO files (`prefix-number/bank_code`) |
-| `FAKTUROID_SENDER_NAME` | no | Company name for ABO payment messages |
-| `FAKTUROID_SENDER_ICO` | no | Company ICO for ABO payment messages |
+| Proměnná | Povinná | Popis |
+|----------|:-------:|-------|
+| `FAKTUROID_CLIENT_ID` | ano | OAuth 2 Client ID z nastavení Fakturoid API |
+| `FAKTUROID_CLIENT_SECRET` | ano | OAuth 2 Client Secret |
+| `FAKTUROID_SLUG` | ano | Slug vašeho Fakturoid účtu |
+| `DISCORD_WEBHOOK_URL` | ne | Discord webhook pro notifikace z `check-due` |
+| `FAKTUROID_SENDER_ACCOUNT` | ne | Bankovní účet pro ABO soubory (`prefix-číslo/kód_banky`) |
+| `FAKTUROID_SENDER_NAME` | ne | Název firmy pro zprávu v ABO platbě |
+| `FAKTUROID_SENDER_ICO` | ne | IČO firmy pro zprávu v ABO platbě |
 
-## API Coverage
+## Pokrytí API
 
-Built on [Fakturoid API v3](https://www.fakturoid.cz/api/v3):
+Postaveno na [Fakturoid API v3](https://www.fakturoid.cz/api/v3):
 
-| Resource | List | Search | Get | Create | Update | PDF |
-|----------|:----:|:------:|:---:|:------:|:------:|:---:|
-| Invoices | yes | yes | yes | yes | yes | yes |
-| Subjects (contacts) | yes | yes | yes | yes | — | — |
-| Expenses | yes | yes | yes | — | — | — |
-| Account | — | — | yes | — | — | — |
-| Invoice actions (fire) | — | — | — | yes | — | — |
+| Zdroj | Seznam | Hledání | Detail | Vytvoření | Úprava | PDF |
+|-------|:------:|:-------:|:------:|:---------:|:------:|:---:|
+| Faktury | ano | ano | ano | ano | ano | ano |
+| Kontakty | ano | ano | ano | ano | -- | -- |
+| Náklady | ano | ano | ano | -- | -- | -- |
+| Účet | -- | -- | ano | -- | -- | -- |
+| Akce na fakturách (fire) | -- | -- | -- | ano | -- | -- |
 
-All list endpoints auto-paginate (40 items per page) so you get complete data.
+Všechny seznamové endpointy automaticky stránkují (40 položek na stránku), takže dostanete kompletní data.
 
-### Not Yet Implemented
+### Zatím neimplementováno
 
-Contributions welcome for:
+Pull requesty vítány:
 
-- Invoice Payments, Messages, Expense Payments
-- Generators & Recurring Generators (templates)
-- Events (audit log), Todos, Users
-- Bank Accounts, Number Formats
-- Inventory Items & Moves
-- Inbox Files, Webhooks
+- Platby faktur, zprávy k fakturám, platby nákladů
+- Generátory a opakované generátory (šablony)
+- Události (audit log), úkoly, uživatelé
+- Bankovní účty, číselné řady
+- Skladové položky a pohyby
+- Příchozí soubory, webhooky
 
-## Project Structure
+## Struktura projektu
 
 ```
 fakturoid-connector/
 ├── src/fakturoid_connector/
-│   ├── client.py           # Fakturoid API v3 client (OAuth 2, auto-pagination)
-│   ├── cli.py              # Click CLI (invoices, contacts, reports, ABO, check-due)
-│   ├── mcp_server.py       # MCP server with 11 tools for AI assistants
-│   ├── notifications.py    # Discord webhook — due date alerts
-│   ├── reports.py          # Monthly/yearly report generation
-│   └── abo.py              # ABO payment order file generator
+│   ├── client.py           # Fakturoid API v3 klient (OAuth 2, auto-stránkování)
+│   ├── cli.py              # Click CLI (faktury, kontakty, reporty, ABO, check-due)
+│   ├── mcp_server.py       # MCP server s 11 nástroji pro AI asistenty
+│   ├── notifications.py    # Discord webhook -- upozornění na splatnosti
+│   ├── reports.py          # Generování měsíčních/ročních reportů
+│   └── abo.py              # Generátor ABO platebních souborů
 ├── tests/
 │   ├── test_client.py
 │   ├── test_cli.py
@@ -275,7 +275,7 @@ fakturoid-connector/
 └── README.md
 ```
 
-## Development
+## Vývoj
 
 ```bash
 git clone https://github.com/Continero/fakturoid-connector.git
@@ -286,22 +286,22 @@ pip install -e .
 pip install pytest
 ```
 
-Run tests:
+Spuštění testů:
 
 ```bash
 python -m pytest tests/ -v
 ```
 
-All tests use mocked API responses — no Fakturoid account needed for development.
+Testy používají mockované API odpovědi, pro vývoj nepotřebujete Fakturoid účet.
 
-## Related
+## Související projekty
 
-- **[Fio Connector](https://github.com/Continero/fio-connector)** — CLI + MCP server for Fio banka (transactions, categories, reports, payment orders)
-- [Fakturoid.cz](https://www.fakturoid.cz/) — Czech invoicing platform
-- [Fakturoid API v3 docs](https://www.fakturoid.cz/api/v3)
-- [Claude Code](https://claude.ai/claude-code) — AI coding assistant with MCP support
-- [MCP specification](https://modelcontextprotocol.io/)
+- [Fio Connector](https://github.com/Continero/fio-connector) -- CLI + MCP server pro Fio banku (transakce, kategorie, reporty, platební příkazy)
+- [Fakturoid.cz](https://www.fakturoid.cz/) -- česká fakturační platforma
+- [Fakturoid API v3 dokumentace](https://www.fakturoid.cz/api/v3)
+- [Claude Code](https://claude.ai/claude-code) -- AI asistent s podporou MCP
+- [MCP specifikace](https://modelcontextprotocol.io/)
 
-## License
+## Licence
 
-MIT — see [LICENSE](LICENSE).
+MIT -- viz [LICENSE](LICENSE).
